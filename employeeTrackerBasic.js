@@ -13,11 +13,11 @@ const connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "Valencia21!",
+  password: "basic",
   database: "employeeTracker_DB",
 });
 
 connection.connect((err) => {
   if (err) throw err;
-  start();
+  // start();
 });
