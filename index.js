@@ -52,7 +52,10 @@ const init = () => {
           break;
         case "Add a new Employee":
           addEmployee();
-        // break;
+          break;
+        case "Updated employee role":
+          updateEmployeeRole();
+          break;
       }
     });
 };
@@ -231,6 +234,70 @@ const addEmployee = () => {
                 });
               });
           });
+        });
+      });
+  });
+};
+
+//allows to update the employee role
+
+const updateEmployeeRole = () => {
+  connection.query("SELECT * FROM employee", (err, results) => {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          type: "rawlist",
+          message: "Which employee's role do you want to update?",
+          name: "nameEmployee",
+          choices() {
+            const choiceArray = [];
+            results.forEach(({ last_name }) => {
+              choiceArray.push(last_name);
+            });
+            return choiceArray;
+          },
+        },
+      ])
+      .then((response) => {
+        const employeeName = response.nameEmployee;
+        connection.query("SELECT * FROM role", (err, results) => {
+          if (err) throw err;
+          inquirer
+            .prompt([
+              {
+                type: "rawlist",
+                message: "What is the employee new Role?",
+                name: "newRole",
+                choices() {
+                  const choiceNewrole = [];
+                  results.forEach(({ title }) => {
+                    choiceNewrole.push(title);
+                  });
+                  return choiceNewrole;
+                },
+              },
+            ])
+            .then((answer) => {
+              const roleNew = answer.newRole;
+              connection.query(
+                "SELECT * FROM role WHERE title = ?",
+                [roleNew],
+                (err, results) => {
+                  if (err) throw err;
+                  let idRole = results[0].id;
+                  let sql =
+                    "UPDATE employee SET role_id = ? WHERE last_name = ?;";
+                  connection.query(sql, [idRole, employeeName], (err) => {
+                    if (err) throw err;
+                    console.log(
+                      `You have updated ${employeeName}'s role to ${roleNew} sucessfully`
+                    );
+                    init();
+                  });
+                }
+              );
+            });
         });
       });
   });
