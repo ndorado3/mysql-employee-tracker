@@ -1,7 +1,8 @@
 DROP DATABASE IF EXISTS employeeTracker_DB;
 CREATE DATABASE employeeTracker_DB;
 USE employeeTracker_DB;
--- CreateS 3 tables: departments, role and employee
+
+-- Creates 3 tables: departments, role and employee
 CREATE TABLE departments (
   id INT NOT NULL AUTO_INCREMENT,
   department_name VARCHAR (30) NOT NULL,

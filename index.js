@@ -1,27 +1,24 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-const cTable = require("console.table");
-// const { restoreDefaultPrompts } = require("inquirer");
+require("console.table");
 
 // create the connection information for the sql database
 const connection = mysql.createConnection({
   host: "localhost",
-
   // Your port; if not 3306
   port: 3306,
-
   // Your username
   user: "root",
-
   // Your password
   password: "Valencia21!",
   database: "employeeTracker_DB",
 });
 
-// connection.connect((err) => {
-//   if (err) throw err;
-//   // start();
-// });
+// connects to mysql server and sql database
+connection.connect((err) => {
+  if (err) throw err;
+  init();
+});
 
 //function that prompts the menu questions
 const init = () => {
@@ -33,7 +30,7 @@ const init = () => {
         "Add a new Department",
         "Add a new Role",
         "Add a new Employee",
-        "View all Departments ",
+        "View all Departments",
         "View all Roles ",
         "View all employees",
         "Updated employee role",
@@ -53,11 +50,36 @@ const init = () => {
         case "Add a new Employee":
           addEmployee();
           break;
+        case "View all Departments":
+          viewDepartments();
+          break;
         case "Updated employee role":
           updateEmployeeRole();
           break;
+        case "View all employees":
+          viewEmployees();
+          break;
+        default:
+          process.exit();
       }
     });
+};
+
+const viewEmployees = () => {
+  connection.query("SELECT * FROM employee;", (err, res) => {
+    if (err) throw err;
+    console.log("HI Nadia");
+    console.table(res);
+    init();
+  });
+};
+
+const viewDepartments = () => {
+  connection.query("SELECT * FROM departments", (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    init();
+  });
 };
 
 //function to Add a Department to the database
@@ -83,8 +105,7 @@ const addDepartment = () => {
           console.log(
             `The Department ${response.departmentName} was added successfully!!`
           );
-          //re-prompt the menu questions
-          init();
+          viewDepartments();
         }
       );
     });
@@ -227,8 +248,7 @@ const addEmployee = () => {
                       console.log(
                         `The new Employee ${response.firstName} was added successfully!!`
                       );
-                      //viewRoles ();
-                      init();
+                      viewEmployees();
                     }
                   );
                 });
@@ -240,7 +260,6 @@ const addEmployee = () => {
 };
 
 //allows to update the employee role
-
 const updateEmployeeRole = () => {
   connection.query("SELECT * FROM employee", (err, results) => {
     if (err) throw err;
@@ -293,7 +312,7 @@ const updateEmployeeRole = () => {
                     console.log(
                       `You have updated ${employeeName}'s role to ${roleNew} sucessfully`
                     );
-                    init();
+                    viewEmployees();
                   });
                 }
               );
@@ -302,9 +321,3 @@ const updateEmployeeRole = () => {
       });
   });
 };
-
-// connects to mysql server and sql database
-connection.connect((err) => {
-  if (err) throw err;
-  init();
-});
