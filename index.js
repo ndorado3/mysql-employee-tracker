@@ -49,7 +49,10 @@ const init = () => {
           break;
         case "Add a new Role":
           addRole();
-        //break;
+          break;
+        case "Add a new Employee":
+          addEmployee();
+        // break;
       }
     });
 };
@@ -98,7 +101,7 @@ const addRole = () => {
         },
         {
           type: "input",
-          message: "What is the Salary of the new Role?",
+          message: "What is the annual Salary of the new Role?",
           name: "roleSalary",
         },
         {
@@ -117,12 +120,12 @@ const addRole = () => {
       ])
       .then((response) => {
         const chosenDepartment = response.roleDepartment;
+        //it obtains the department id
         connection.query("SELECT * FROM departments", (err, results) => {
           if (err) throw err;
           let departmentFilter = results.filter((results) => {
             return results.department_name === chosenDepartment;
           });
-          // let deptId = departmentFilter[0].id;
           let sql =
             "INSERT INTO role (title, salary, department_id) VALUES (?,?,?)";
           connection.query(
@@ -134,8 +137,100 @@ const addRole = () => {
                 `The Role ${response.roleTitle} was added successfully!!`
               );
               //viewRoles ();
+              init();
             }
           );
+        });
+      });
+  });
+};
+
+//function to Add an Employee to the database
+const addEmployee = () => {
+  //getting all items in the role table from the db
+  connection.query("SELECT * FROM role", (err, results) => {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What is the Employee's first name?",
+          name: "firstName",
+        },
+        {
+          type: "input",
+          message: "What is the Employee's last name?",
+          name: "lastName",
+        },
+        {
+          type: "rawlist",
+          message: "What is the new Employee role?",
+          name: "roleID",
+          //It pulls all the roles by name from the db
+          choices() {
+            const choiceArray = [];
+            results.forEach(({ title }) => {
+              choiceArray.push(title);
+            });
+            return choiceArray;
+          },
+        },
+      ])
+      .then((response) => {
+        //it obtains the roles id from the choosen role title
+        const chosenRole = response.roleID;
+        connection.query("SELECT * FROM role", (err, results) => {
+          if (err) throw err;
+          let roleFilter = results.filter((results) => {
+            return results.title === chosenRole;
+          });
+          //it obtains the manager id from the choosen employee name
+          connection.query("SELECT * FROM employee", (err, results) => {
+            if (err) throw err;
+            inquirer
+              .prompt([
+                {
+                  type: "rawlist",
+                  message: "Who is the Employee's Manager?",
+                  name: "managerID",
+                  choices() {
+                    const choiceManager = [];
+                    results.forEach(({ first_name }) => {
+                      choiceManager.push(first_name);
+                    });
+                    return choiceManager;
+                  },
+                },
+              ])
+              .then((responseManager) => {
+                const chosenManager = responseManager.managerID;
+                connection.query("SELECT * FROM employee", (err, results) => {
+                  if (err) throw err;
+                  let managerIDfilter = results.filter((results) => {
+                    return results.first_name === chosenManager;
+                  });
+                  let sql =
+                    "INSERT INTO employee (first_name,last_name,role_id, manager_id) VALUES (?,?,?,?)";
+                  connection.query(
+                    sql,
+                    [
+                      response.firstName,
+                      response.lastName,
+                      roleFilter[0].id,
+                      managerIDfilter[0].id,
+                    ],
+                    (err) => {
+                      if (err) throw err;
+                      console.log(
+                        `The new Employee ${response.firstName} was added successfully!!`
+                      );
+                      //viewRoles ();
+                      init();
+                    }
+                  );
+                });
+              });
+          });
         });
       });
   });
@@ -146,27 +241,3 @@ connection.connect((err) => {
   if (err) throw err;
   init();
 });
-
-// .then((response) => {
-//   connection.query("SELECT * FROM departments", (err, res) => {
-//     let chosenDepartment;
-//     if (err) throw err;
-//     results.forEach((department) => {
-//       if (department.department_name === response.roleDepartment) {
-//         chosenDepartment = department;
-//       }
-//     });
-//     let id = chosenDepartment[0].id;
-//     let sql =
-//       "INSERT INTO role SET (title, salary, department_id) VALUES (?,?,?) ";
-//     let values = [response.roleTitle, parseInt(response.roleSalary), id];
-//     console.log(vlaues);
-//     connection.query(sql, values, (err) => {
-//       if (err) throw err;
-//       console.log(
-//         `The Role ${response.roleTitle} was added successfully!!`
-//       );
-//     });
-//   });
-//   // viewRoles()
-// });
