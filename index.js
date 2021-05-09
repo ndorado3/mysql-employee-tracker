@@ -1,5 +1,7 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
+const chalk = require("chalk");
+const figlet = require("figlet");
 require("console.table");
 
 // create the connection information for the sql database
@@ -17,6 +19,21 @@ const connection = mysql.createConnection({
 // connects to mysql server and sql database
 connection.connect((err) => {
   if (err) throw err;
+  console.log(
+    chalk.blue(
+      `====================================================================================`
+    )
+  );
+  console.log(``);
+  console.log(chalk.cyan.bold(figlet.textSync("Employee Tracker")));
+  console.log(``);
+  console.log(chalk.cyan("By Nadia Dorado"));
+  console.log(``);
+  console.log(
+    chalk.blue(
+      `====================================================================================`
+    )
+  );
   init();
 });
 
@@ -28,39 +45,45 @@ const init = () => {
       message: "What would you like to do?",
       choices: [
         "Add a new Department",
-        "Add a new Role",
         "Add a new Employee",
+        "Add a new Role",
         "View all Departments",
-        "View all Roles ",
-        "View all employees",
-        "Updated employee role",
+        "View all Roles",
+        "View all Employees",
+        "Updated Employee Role",
         "EXIT",
       ],
       name: "menu",
     })
     .then((response) => {
-      // console.log("sucess!!!");
       switch (response.menu) {
         case "Add a new Department":
           addDepartment();
           break;
-        case "Add a new Role":
-          addRole();
-          break;
         case "Add a new Employee":
           addEmployee();
           break;
+        case "Add a new Role":
+          addRole();
+          break;
+
         case "View all Departments":
           viewDepartments();
           break;
-        case "View all employees":
+        case "View all Employees":
           viewEmployees();
           break;
-        case "Updated employee role":
+        case "View all Roles":
+          viewRole();
+          break;
+        case "Updated Employee Role":
           updateEmployeeRole();
           break;
-        default:
-          process.exit();
+        case "EXIT":
+          connection.end();
+          break;
+        // default:
+        //   process.exit();
       }
     });
 };
@@ -72,24 +95,35 @@ const viewDepartments = () => {
     console.table(res);
     init();
   });
+  console.log(`DEPARTMENTS:`);
 };
 
-//Displays a table with the employee id, full name, role, & manager id
-const viewEmployees = () => {
+//Displays a table with the roles
+const viewRole = () => {
   connection.query(
-    `SELECT employee.id AS "ID", CONCAT(employee.first_name, " ", employee.last_name) AS "Employee Name", role.title AS "Role", role.salary AS "Salary", employee.manager_id As "Manager ID" FROM employee LEFT JOIN role ON employee.role_id = role.id;`,
-    // `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
-    // FROM employee
-    // LEFT JOIN employee manager on manager.id = employee.manager_id
-    // INNER JOIN role ON (role.id = employee.role_id)
-    // INNER JOIN department ON (department.id = role.department_id)
-    // ORDER BY employee.id;`,
+    `SELECT role.id AS "Role ID",role.title AS "Role", CONCAT(employee.first_name, " ", employee.last_name) AS "Employee Name", role.salary AS "Salary", departments.department_name AS "Department" FROM employee LEFT JOIN role ON (role.id = employee.role_id)
+  LEFT JOIN departments ON (departments.id = role.department_id);`,
     (err, res) => {
       if (err) throw err;
       console.table(res);
       init();
     }
   );
+  console.log(`EPLOYEES ROLES:`);
+};
+
+//Displays a table with the employee id, full name, role, & manager id
+const viewEmployees = () => {
+  connection.query(
+    `SELECT employee.id AS "ID", CONCAT(employee.first_name, " ", employee.last_name) AS "Employee Name", departments.department_name AS "Department", role.title AS "Role", role.salary AS "Salary", employee.manager_id As "Manager ID" FROM employee LEFT JOIN role ON (employee.role_id = role.id)
+    LEFT JOIN departments ON (departments.id = role.department_id);`,
+    (err, res) => {
+      if (err) throw err;
+      console.table(res);
+      init();
+    }
+  );
+  console.log(`EMPLOYEES:`);
 };
 
 //function to Add a Department to the database
@@ -170,8 +204,7 @@ const addRole = () => {
               console.log(
                 `The Role ${response.roleTitle} was added successfully!!`
               );
-              //viewRoles ();
-              init();
+              viewRole();
             }
           );
         });
