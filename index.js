@@ -53,11 +53,11 @@ const init = () => {
         case "View all Departments":
           viewDepartments();
           break;
-        case "Updated employee role":
-          updateEmployeeRole();
-          break;
         case "View all employees":
           viewEmployees();
+          break;
+        case "Updated employee role":
+          updateEmployeeRole();
           break;
         default:
           process.exit();
@@ -65,21 +65,31 @@ const init = () => {
     });
 };
 
-const viewEmployees = () => {
-  connection.query("SELECT * FROM employee;", (err, res) => {
+//Displays a table with the departments id & name
+const viewDepartments = () => {
+  connection.query("SELECT * FROM departments;", (err, res) => {
     if (err) throw err;
-    console.log("HI Nadia");
     console.table(res);
     init();
   });
 };
 
-const viewDepartments = () => {
-  connection.query("SELECT * FROM departments", (err, res) => {
-    if (err) throw err;
-    console.table(res);
-    init();
-  });
+//Displays a table with the employee id, full name, role, & manager id
+const viewEmployees = () => {
+  connection.query(
+    `SELECT employee.id AS "ID", CONCAT(employee.first_name, " ", employee.last_name) AS "Employee Name", role.title AS "Role", role.salary AS "Salary", employee.manager_id As "Manager ID" FROM employee LEFT JOIN role ON employee.role_id = role.id;`,
+    // `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+    // FROM employee
+    // LEFT JOIN employee manager on manager.id = employee.manager_id
+    // INNER JOIN role ON (role.id = employee.role_id)
+    // INNER JOIN department ON (department.id = role.department_id)
+    // ORDER BY employee.id;`,
+    (err, res) => {
+      if (err) throw err;
+      console.table(res);
+      init();
+    }
+  );
 };
 
 //function to Add a Department to the database
