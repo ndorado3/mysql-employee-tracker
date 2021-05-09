@@ -3,7 +3,7 @@
 
 ## Description 
 
- This application I architect and build a solution for managing a company's employees using node, inquirer, and MySQL.
+ This application I buildED as a solution for managing a company's employees using node, inquirer, and MySQL.
 
 ## User Story
 ```
@@ -29,7 +29,7 @@ So that I can organize and plan my business
 
 *Steps require to install this project and to get the development environment running:*
 
-- In order to use this application, first you need to run the command below in the terminal:  
+- In order to use this application, first you need to run the command below at the root of your project and answer the questions:  
 ```bash
 npm i
 ```
@@ -42,62 +42,37 @@ npm i
 - Console.table : Use [console.table](https://www.npmjs.com/package/console.table) to print MySQL rows to the console. There is a built-in version of `console.table`, but the NPM package formats the data a little better for our purposes.
 
 ## Usage
-- Link to a walkthrough video that demonstrates its functionality:
+- Link to a walkthrough video that demonstrates the application functionality:
 
-    *  [MySQL employee Tracker  Walkthrough Video]()
+    *  [MySQL employee Tracker  Walkthrough Video](https://vimeo.com/547024516)
 
-Design the following database schema containing three tables:
+### Steps to generated the application:
 
-* **department**:
+1. Run the following command in the terminal:
+```bash
+node index.js
+```
+2. From the menu options choose what would you like to do:
+- Menu
+   ![Menu](./Assets/img/menu.png)
 
-  * **id** - INT PRIMARY KEY
-  * **name** - VARCHAR(30) to hold department name
+3. When choosing to add a department, employee or role, please answer the questions:  
+- Adding to the database: 
+   ![Adding](./Assets/img/add.png)   
 
-* **role**:
+4. When you click on the View options, a table with the choosen information will be display: 
+- View of the department table
+   ![View](./Assets/img/view.png)  
 
-  * **id** - INT PRIMARY KEY
-  * **title** -  VARCHAR(30) to hold role title
-  * **salary** -  DECIMAL to hold role salary
-  * **department_id** -  INT to hold reference to department role belongs to
-
-* **employee**:
-
-  * **id** - INT PRIMARY KEY
-  * **first_name** - VARCHAR(30) to hold employee first name
-  * **last_name** - VARCHAR(30) to hold employee last name
-  * **role_id** - INT to hold reference to role employee has
-  * **manager_id** - INT to hold reference to another employee that manages the employee being Created. This field may be null if the employee has no manager
-  
-Build a command-line application that at a minimum allows the user to:
-
-  * Add departments, roles, employees
-
-  * View departments, roles, employees
-
-  * Update employee roles
-
-Bonus points if you're able to:
-
-  * Update employee managers
-
-  * View employees by manager
-
-  * Delete departments, roles, and employees
-
-  * View the total utilized budget of a department -- ie the combined salaries of all employees in that department
-
-We can frame this challenge as follows:
+5. To update the role of an employee, just click on the "update" option and fallow the instructions: 
+- Updating an employee role
+   ![Update role](./Assets/img/update.png)   
 
 
-### Hints
 
-* You may wish to include a `seed.sql` file to pre-populate your database. This will make development of individual features much easier.
 
-* Focus on getting the basic functionality completed before working on more advanced features.
 
-* Review the week's activities for a refresher on MySQL.
 
-* Check out [SQL Bolt](https://sqlbolt.com/) for some extra MySQL help.
 
 ## Contributions
 

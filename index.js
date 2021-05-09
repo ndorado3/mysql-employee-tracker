@@ -109,7 +109,7 @@ const viewRole = () => {
       init();
     }
   );
-  console.log(`EPLOYEES ROLES:`);
+  console.log(`EMPLOYEES ROLES:`);
 };
 
 //Displays a table with the employee id, full name, role, & manager id
@@ -204,7 +204,7 @@ const addRole = () => {
               console.log(
                 `The Role ${response.roleTitle} was added successfully!!`
               );
-              viewRole();
+              init();
             }
           );
         });
